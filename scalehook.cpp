@@ -230,6 +230,7 @@ bool scalehook::hook::uninstall()
 	}
 	memset(scalehook_src, 0x90, scalehook_len);
 	scalehook_installed = false;
+	return true;
 }
 scalehook::address scalehook::hook::get_original_address()
 {
