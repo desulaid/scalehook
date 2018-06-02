@@ -35,6 +35,8 @@ int main()
   {
     cout << "Hook failed." << endl;
   }
+  func();
+  new_hook->uninstall();
   // Free memory
   delete new_hook;
   return 0;
