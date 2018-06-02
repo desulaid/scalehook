@@ -52,7 +52,7 @@ bool scalehook::unprotect(void *src, int size)
 }
 unsigned long scalehook::get_address(void *addr)
 {
-	reinterpret_cast<unsigned long>(addr);
+	return reinterpret_cast<unsigned long>(addr);
 }
 // -----------------------------------
 
