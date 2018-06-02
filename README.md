@@ -18,11 +18,17 @@ cross-platform C++ hooking library
 using namespace std;
 
 // Function, which we want to hook
+#ifdef _WIN32
+_declspec (noinline)
+#endif
 void func()
 {
   cout << "func" << endl;
 }
 
+#ifdef _WIN32
+_declspec (noinline)
+#endif
 void hooked_func()
 {
   cout << "hooked func" << endl;
