@@ -42,3 +42,27 @@ int main()
   return 0;
 }
 ```
+Fast hook:
+```C+++
+#include <iostream>
+#include "scalehook.h"
+
+using namespace std;
+/* using namespace scalehook; */
+
+void __cdecl hooked_func_print()
+{
+  cout << "Hooked." << endl;
+}
+
+void __cdecl func_print()
+{
+  cout << "Print." << endl;
+}
+
+int main()
+{
+  scalehook::hook::fast_create((void*)func_print, (void*)hooked_func_print);
+  return 0;
+}
+```
