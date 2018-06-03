@@ -5,7 +5,7 @@
 	you may not use this file except in compliance with the License.
 	You may obtain a copy of the License at
 
-		http://www.apache.org/licenses/LICENSE-2.0
+	http://www.apache.org/licenses/LICENSE-2.0
 
 	Unless required by applicable law or agreed to in writing, software
 	distributed under the License is distributed on an "AS IS" BASIS,
@@ -58,7 +58,7 @@ unsigned long scalehook::get_address(void *addr)
 
 // -----------------------------------
 // class :address
-scalehook::address::address(){}
+scalehook::address::address() {}
 scalehook::address::address(unsigned long addr)
 {
 	shaddr = addr;
@@ -155,85 +155,109 @@ scalehook::address scalehook::scanner::find(const char *pattern, const char *mas
 
 // -----------------------------------
 // class :hook
-scalehook::hook::hook(void *src, void *dst, int type, int opcode, int len)
+scalehook_t *scalehook::hook::create(void *src, void *dst, int size, int type, unsigned char opcode)
 {
-	scalehook_src = src;
-	scalehook_dst = dst;
-	scalehook_len = len;
-	scalehook_installed = false;
-	scalehook_unprotected = false;
-	scalehook_opcode = opcode;
-	scalehook_type = type;
+	scalehook_t *new_scalehook = new scalehook_t();
+	/*
+	//	store original data
+	*/
+	new_scalehook->original_bytes = new unsigned char[size];
+	memcpy(new_scalehook->original_bytes, src, size);
+	new_scalehook->original_address = reinterpret_cast<unsigned long>(src);
+
+	new_scalehook->size = size;
+	new_scalehook->src = src;
+	new_scalehook->dst = dst;
+	new_scalehook->type = type;
+	new_scalehook->opcode = opcode;
+
+	if (!unprotect(new_scalehook->src, new_scalehook->get_size()))
+	{
+		scalehook_delete_safe_bytes(new_scalehook->original_bytes);
+		scalehook_delete_safe(new_scalehook);
+		return NULL;
+	}
+
+	new_scalehook->unprotected = true;
+	if (new_scalehook->get_type() == scalehook_type_method)
+	{
+		*(unsigned long*)new_scalehook->src = (unsigned long)new_scalehook->dst;
+		new_scalehook->installed = true;
+	}
+	else if (new_scalehook->get_type() == scalehook_type_call)
+	{
+		new_scalehook->new_bytes = new unsigned char[new_scalehook->get_size()];
+		new_scalehook->new_bytes[0] = new_scalehook->get_opcode();
+		*(unsigned long*)(new_scalehook->new_bytes + 1) = (unsigned long)new_scalehook->dst - ((unsigned long)new_scalehook->src + 5);
+		memcpy(new_scalehook->src, (void*)new_scalehook->new_bytes, new_scalehook->size);
+		new_scalehook->installed = true;
+	}
+	else
+	{
+		return NULL;
+	}
+
+	return new_scalehook;
 }
-bool scalehook::hook::unprotect()
+void scalehook::hook::destroy(scalehook_t *new_scalehook)
 {
-	if (scalehook_unprotected)
-	{
-		return false;
-	}
-
-	if (scalehook::unprotect(scalehook_src, scalehook_len))
-	{
-		scalehook_unprotected = true;
-		return true;
-	}
-	return false;
+	scalehook_delete_safe_bytes(new_scalehook->original_bytes);
+	scalehook_delete_safe_bytes(new_scalehook->new_bytes);
+	scalehook_delete_safe(new_scalehook);
 }
-bool scalehook::hook::install()
+bool scalehook::hook::install(scalehook_t *new_scalehook)
 {
-	if (!scalehook_src || !scalehook_dst || !scalehook_len || scalehook_installed)
+	if (!new_scalehook)
 	{
 		return false;
 	}
 
-	if (!scalehook_unprotected && !unprotect())
+	if (new_scalehook->is_installed())
 	{
 		return false;
 	}
-	
-	if(scalehook_type == scalehook_type_method)
-	{
-		*(unsigned long*)scalehook_src = (unsigned long)scalehook_dst;
-		return true;
-	}
-	else if(scalehook_type == scalehook_type_call)
-	{
-	
-		unsigned char *_new_bytes = new unsigned char[scalehook_len];
 
-		if (scalehook_opcode == jmp_opcode)
-		{
-			_new_bytes[0] = jmp_opcode;
-			scalehook_original_address = reinterpret_cast<unsigned long>(scalehook_src);
-		}
-		else
-		{
-			_new_bytes[0] = call_opcode;
-			scalehook_original_address = ((reinterpret_cast<unsigned long>(scalehook_src) + 1) + (reinterpret_cast<unsigned long>(scalehook_src) + 5));
-		}
-
-		*reinterpret_cast<unsigned long*>(_new_bytes + 1) = reinterpret_cast<unsigned long>(scalehook_dst) - (reinterpret_cast<unsigned long>(scalehook_src) + 5);
-		memcpy(scalehook_src, _new_bytes, scalehook_len);
-
-		// free memory
-		delete[] _new_bytes;
-		scalehook_installed = true;
-		return true;
-	}
-	return false;
-}
-bool scalehook::hook::uninstall()
-{
-	if (!scalehook_installed)
+	if (!new_scalehook->is_unprotected())
 	{
-		return false;
+		if(!unprotect(new_scalehook->src, new_scalehook->get_size())) return false;
+		new_scalehook->unprotected = true;
 	}
-	memset(scalehook_src, 0x90, scalehook_len);
-	scalehook_installed = false;
+
+	memcpy(new_scalehook->src, (void*)new_scalehook->new_bytes, new_scalehook->size);
+	new_scalehook->installed = true;
+
 	return true;
 }
-scalehook::address scalehook::hook::get_original_address()
+bool scalehook::hook::uninstall(scalehook_t *new_scalehook)
 {
-	return scalehook_original_address;
+	if (!new_scalehook)
+	{
+		return false;
+	}
+
+	if (!new_scalehook->is_installed())
+	{
+		return false;
+	}
+
+	if (!new_scalehook->is_unprotected())
+	{
+		if(new_scalehook->is_unprotected()) return false;
+		new_scalehook->unprotected = true;
+	}
+
+	memcpy(new_scalehook->src, new_scalehook->original_bytes, new_scalehook->size);
+	new_scalehook->installed = false;
+
+	return true;
+}
+scalehook::address scalehook::hook::get_original_address(scalehook_t *new_scalehook)
+{
+	if (!new_scalehook)
+	{
+		return address((void*)NULL);
+	}
+
+	return address(new_scalehook->original_address);
 }
 // -----------------------------------

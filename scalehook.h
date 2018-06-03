@@ -5,7 +5,7 @@
 	you may not use this file except in compliance with the License.
 	You may obtain a copy of the License at
 
-		http://www.apache.org/licenses/LICENSE-2.0
+	http://www.apache.org/licenses/LICENSE-2.0
 
 	Unless required by applicable law or agreed to in writing, software
 	distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,6 +26,7 @@
 #pragma once
 #include <iostream>
 #include <string.h>
+#include <vector>
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -48,6 +49,65 @@
 */
 #define scalehook_type_method		0
 #define scalehook_type_call			1
+
+/*
+//	other macroses
+*/
+#define scalehook_delete_safe_bytes(n)		if(n) delete[] n
+#define scalehook_delete_safe(n)			if(n) delete n
+
+/*
+//	scalehook structure
+*/
+typedef struct
+{
+	// bytes
+	unsigned char *original_bytes;
+	unsigned char *new_bytes;
+	//
+	void *src;
+	void *dst;
+	int size;
+	//
+	unsigned long original_address;
+	//
+	unsigned char opcode;
+	int type;
+	//
+	bool installed;
+	bool unprotected;
+
+	//
+	unsigned long get_original_address()
+	{
+		return original_address;
+	}
+
+	unsigned char get_opcode()
+	{
+		return opcode;
+	}
+
+	int get_type()
+	{
+		return type;
+	}
+
+	bool is_installed()
+	{
+		return installed;
+	}
+
+	bool is_unprotected()
+	{
+		return unprotected;
+	}
+
+	int get_size()
+	{
+		return size;
+	}
+} scalehook_t;
 
 // ----------------------------
 // namespace :scalehook
@@ -108,7 +168,7 @@ namespace scalehook
 		// image dos base
 		unsigned long base = 0;
 
-		// patern length (getting from mask length, it's so property!)
+		// patern length (getting from mask length, it's so important!)
 		unsigned long patternlength = 0;
 
 	public:
@@ -131,41 +191,26 @@ namespace scalehook
 	*/
 	class hook
 	{
-	private:
-		/*
-		//	scale hook info
-		*/
-		address scalehook_original_address;
-		void *scalehook_dst;
-		void *scalehook_src;
-		int scalehook_len;
-		int scalehook_opcode;
-		int scalehook_type;
-
-		/*
-		//	to avoid double installing
-		*/
-		bool scalehook_installed;
-
-		/*
-		//	to avoid double unprotecting
-		*/
-		bool scalehook_unprotected;
-
 	public:
 		/*
-		//	set scale hook info
+		//	create a hook
 		*/
-		hook(void *src, void *dst, int type = scalehook_type_call, int opcode = jmp_opcode, int len = 5);
-
-		bool unprotect();
-		bool install();
-		bool uninstall();
-		
+		static scalehook_t *create(void *src, void *dst, int size = 5, int type = scalehook_type_call, unsigned char opcode = jmp_opcode);
 		/*
-		// 	return stored original address (src)
+		//	you should destroy it, after using to avoid memory leak!
 		*/
-		address get_original_address();
+		static void destroy(scalehook_t *new_scalehook);
+
+		/*
+		//	installing/uninstalling already created hook
+		*/
+		static bool install(scalehook_t *new_scalehook);
+		static bool uninstall(scalehook_t *new_scalehook);
+
+		/*
+		// 	return stored original address
+		*/
+		static address get_original_address(scalehook_t *new_scalehook);
 	};
 }
 // ----------------------------
