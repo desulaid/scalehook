@@ -16,35 +16,29 @@ cross-platform C++ hooking library
 #include "scalehook.h"
 
 using namespace std;
+/* using namespace scalehook; */
 
-// Function, which we want to hook
-#ifdef _WIN32
-_declspec (noinline)
-#endif
-void func()
+scalehook_t *new_hook;
+
+void __cdecl hooked_func_print()
 {
-  cout << "func" << endl;
+  cout << "Hooked." << endl;
+  scalehook::hook::uninstall(new_hook);
+  reinterpret_cast<void(__cdecl*)()>(new_hook->get_original_address())();
+  /*
+  //  Required to avoid memory leak!!!!
+  */
+  scalehook::hook::destroy(new_hook);
 }
 
-#ifdef _WIN32
-_declspec (noinline)
-#endif
-void hooked_func()
+void __cdecl func_print()
 {
-  cout << "hooked func" << endl;
+  cout << "Print." << endl;
 }
 
 int main()
 {
-  scalehook::hook *new_hook = new scalehook::hook((void*)func, (void*)hooked_func);
-  if(!new_hook->install())
-  {
-    cout << "Hook failed." << endl;
-  }
-  func();
-  new_hook->uninstall();
-  // Free memory
-  delete new_hook;
+  new_hook = scalehook::hook::create((void*)func_print, (void*)hooked_func_print);
   return 0;
 }
 ```
