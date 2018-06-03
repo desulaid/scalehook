@@ -195,7 +195,7 @@ namespace scalehook
 		/*
 		//	create a hook
 		*/
-		static scalehook_t *create(void *src, void *dst, int size = 5, int type = scalehook_type_call, unsigned char opcode = jmp_opcode);
+		static scalehook_t *create(void *src, void *dst, int size = 5, int type = scalehook_type_call, unsigned char opcode = scalehook_opcode_jmp);
 		/*
 		//	you should destroy it, after using to avoid memory leak!
 		*/
