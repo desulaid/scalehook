@@ -163,7 +163,6 @@ scalehook_t *scalehook::hook::create(void *src, void *dst, int size, int type, u
 	*/
 	new_scalehook->original_bytes = new unsigned char[size];
 	memcpy(new_scalehook->original_bytes, src, size);
-	new_scalehook->original_address = reinterpret_cast<unsigned long>(src);
 
 	new_scalehook->size = size;
 	new_scalehook->src = src;
@@ -187,7 +186,18 @@ scalehook_t *scalehook::hook::create(void *src, void *dst, int size, int type, u
 	else if (new_scalehook->get_type() == scalehook_type_call)
 	{
 		new_scalehook->new_bytes = new unsigned char[new_scalehook->get_size()];
-		new_scalehook->new_bytes[0] = new_scalehook->get_opcode();
+
+		if (new_scalehook->get_opcode() == scalehook_opcode_jmp)
+		{
+			new_scalehook->new_bytes[0] = scalehook_opcode_jmp;
+			new_scalehook->original_address = (unsigned long)src;
+		}
+		else
+		{
+			new_scalehook->new_bytes[0] = scalehook_opcode_call;
+			new_scalehook->original_address = (unsigned long)src + 1 + (unsigned long)src + 1;
+		}
+
 		*(unsigned long*)(new_scalehook->new_bytes + 1) = (unsigned long)new_scalehook->dst - ((unsigned long)new_scalehook->src + 5);
 		memcpy(new_scalehook->src, (void*)new_scalehook->new_bytes, new_scalehook->size);
 		new_scalehook->installed = true;
