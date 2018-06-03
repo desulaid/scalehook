@@ -43,7 +43,7 @@ int main()
 }
 ```
 Fast hook:
-```C+++
+```C++
 #include <iostream>
 #include "scalehook.h"
 
