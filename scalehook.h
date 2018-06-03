@@ -41,13 +41,13 @@
 /*
 //	scalehook opcodes
 */
-#define jmp_opcode					0xE8
-#define call_opcode 				0xE9
+#define scalehook_opcode_jmp			0xE8
+#define scalehook_opcode_call 			0xE9
 
 /*
 //	scalehook types
 */
-#define scalehook_type_method		0
+#define scalehook_type_method			0
 #define scalehook_type_call			1
 
 /*
