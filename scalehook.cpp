@@ -126,10 +126,16 @@ bool scalehook::scanner::init(void *module_addr)
 	base = (unsigned long)module_info.dli_fbase;
 	size = (unsigned long)stat_buf.st_size;
 #endif
+	inited = true;
 	return true;
 }
-scalehook::address scalehook::scanner::find(const char *pattern, const char *mask)
+scalehook::address scalehook::scanner::find(void *module_addr, const char *pattern, const char *mask)
 {
+	if(!inited)
+	{
+		init(module_addr);
+	}
+	
 	if (!base || !size)
 	{
 		return address();

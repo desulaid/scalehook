@@ -169,6 +169,8 @@ namespace scalehook
 
 		// patern length (getting from mask length, it's so important!)
 		unsigned long patternlength = 0;
+		
+		bool inited = false;
 
 	public:
 		/*
