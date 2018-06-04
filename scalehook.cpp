@@ -96,11 +96,11 @@ void *scalehook::address::get_in_void()
 
 // -----------------------------------
 // class :scanner
-bool scalehook::scanner::init(unsigned long module_addr)
+scalehook::scanner::scanner(void *module)
 {
-	return init(reinterpret_cast<void*>(module_addr));
+	module_addr = module;
 }
-bool scalehook::scanner::init(void *module_addr)
+bool scalehook::scanner::init()
 {
 #ifdef _WIN32
 	MEMORY_BASIC_INFORMATION module_info;
@@ -129,11 +129,11 @@ bool scalehook::scanner::init(void *module_addr)
 	inited = true;
 	return true;
 }
-scalehook::address scalehook::scanner::find(void *module_addr, const char *pattern, const char *mask)
+scalehook::address scalehook::scanner::find(const char *pattern, const char *mask)
 {
 	if(!inited)
 	{
-		init(module_addr);
+		init();
 	}
 	
 	if (!base || !size)

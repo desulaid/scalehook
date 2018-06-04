@@ -171,13 +171,14 @@ namespace scalehook
 		unsigned long patternlength = 0;
 		
 		bool inited = false;
+		void *module_addr = NULL;
 
 	public:
+		scanner(void *module);
 		/*
 		//	get information about image (if we can)
 		*/
-		bool init(unsigned long module_addr);
-		bool init(void *module_addr);
+		bool init();
 
 		/*
 		//	find address by pattern
