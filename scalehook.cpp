@@ -92,6 +92,11 @@ void *scalehook::address::get_in_void()
 	return reinterpret_cast<void*>(shaddr);
 }
 
+bool scalehook::address::isnull()
+{
+	return (shaddr == 0);
+}
+
 // -----------------------------------
 
 // -----------------------------------

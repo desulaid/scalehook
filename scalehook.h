@@ -127,7 +127,7 @@ namespace scalehook
 	class address
 	{
 	private:
-		unsigned long shaddr;
+		unsigned long shaddr = 0;
 
 	public:
 		address();
@@ -151,6 +151,11 @@ namespace scalehook
 		//	same but in pvoid
 		*/
 		void *get_in_void();
+		
+		/*
+		//
+		*/
+		bool isnull();
 	};
 
 	/*
