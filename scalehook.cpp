@@ -280,7 +280,7 @@ bool scalehook::hook::uninstall(scalehook_t *new_scalehook)
 		new_scalehook->unprotected = true;
 	}
 
-	memcpy(new_scalehook->src, new_scalehook->original_bytes, new_scalehook->size);
+	memcpy(new_scalehook->src, (void*)new_scalehook->original_bytes, new_scalehook->size);
 	new_scalehook->installed = false;
 
 	return true;
