@@ -215,6 +215,8 @@ scalehook_t *scalehook::hook::create(void *src, void *dst, int size, int type, u
 	}
 	else
 	{
+		scalehook_delete_safe_bytes(new_scalehook->original_bytes);
+		scalehook_delete_safe(new_scalehook);
 		return NULL;
 	}
 
