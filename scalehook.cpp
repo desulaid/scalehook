@@ -191,6 +191,7 @@ scalehook_t *scalehook::hook::create(void *src, void *dst, int size, int type, u
 	new_scalehook->unprotected = true;
 	if (new_scalehook->get_type() == scalehook_type_method)
 	{
+		new_scalehook->original_address = (unsigned long)new_scalehook->src;
 		*(unsigned long*)new_scalehook->src = (unsigned long)new_scalehook->dst;
 		new_scalehook->installed = true;
 	}
