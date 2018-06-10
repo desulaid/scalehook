@@ -14,14 +14,14 @@
 	limitations under the License.
 */
 /*
-//	scalehook - cross-platform C++ hooking library.
+//	scalehook-cpp - cross-platform C++ hooking library.
 //	include:
 //		cross-platform class for working with addresses
 //		cross-platform class for memory scanning
 //		cross-platform class for hooking
 //
 //	All samples you can find here:
-//		https://github.com/RakLabs/scalehook
+//		https://github.com/RakLabs/scalehook-cpp
 */
 #pragma once
 #include <iostream>
