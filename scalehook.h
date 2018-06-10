@@ -1,5 +1,5 @@
 /*
-	Copyright 2018 RakLabs
+	Copyright 2018 (c) RakLabs
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -14,208 +14,142 @@
 	limitations under the License.
 */
 /*
-//	scalehook-cpp - cross-platform C++ hooking library.
-//	include:
-//		cross-platform class for working with addresses
-//		cross-platform class for memory scanning
-//		cross-platform class for hooking
+//	Welcome to scalehook source code.
+//	If you want know what's that, then read:
+//		scalehook - cross-platform C/C++ hooking library.
 //
-//	All samples you can find here:
-//		https://github.com/RakLabs/scalehook-cpp
+//	It will be very helpful for you, if you want:
+//		* know your security troubles <3
+//		* hook any function c:
+//		* something else?
+//
+//	Some features:
+//		1.) Support two types.
+//		2.) You can use your own opcodes (not only jmp or call).
+//		3.) All! I think that's enough, ha-ha!
+//
+//	Functions:
+//		scalehook_unprotect(void *src, size_t size) - Getting access.
+//
+//		scalehook_create() - Create a hook (returns scalehook structure or nothing).
+//		scalehook_destroy() - Destroy a hook. It very important! If you don't want memory leak (no return anything).
+//		scalehook_create_fast() - Create a hook (with settings by default) (returns scalehook structure or nothing).
+//		scalehook_fast_hook() - Fast hook (returns true/false).
+//
+//		scalehook_get_original_address() - Get hook original address
+//		scalehook_get_opcode() - Get hook opcodes
+//		scalehook_get_src() - Get source.
+//		scalehook_get_dst() - Get dest.
+//		scalehook_is_installed() - Get installing state
+//		scalehook_is_unprotected() - Get unprotecting state
+//		scalehook_get_size() - Get size
+//
+//	Structures:
+//		scalehook_t - scalehook structure
+//
+//	Types:
+//		Method type. (no opcodes)
+//		Call type. (opcodes)
+//
+//	Definited types:
+//		opcode_t (unsigned char).
+//		bytes_t (unsigned char *).
+//		address_t (unsigned long).
+//
+//	Opcodes:
+//		Definited opcodes: jmp & call
+//		Any opcodes
+//
+//	Supports:
+//		Windows/Linux (x32) (other OS didn't tested).
 */
-#pragma once
-#include <iostream>
-#include <string.h>
-#include <vector>
-
+#ifndef SCALEHOOK_H_
+#define SCLAEHOOK_H_
 #if defined __WIN32__ || defined _WIN32 || defined WIN32
 #define scalehook_windows
-#else
+#elif defined __LINUX__ || defined __linux__ || defined __linux || defined __FreeBSD__ || defined __OpenBSD__
 #define scalehook_unix
+#include <stddef.h>
+#endif
+#if !defined scalehook_windows && !defined scalehook_unix
+#error "Damn it! I don't know your OS ):"
+#endif
+#if defined __cplusplus
+#define scalehook_cpp
+#else
+#define scalehook_c
+#endif
+#ifdef scalehook_cpp
+#define scalehook_extern_c extern "C"
+#else
+#define scalehook_extern_c
+#endif
+#ifdef scalehook_windows
+#define scalehook_call __stdcall
+#define scalehook_export scalehook_extern_c
+#else
+#define scalehook_call
+#define scalehook_export scalehook_extern_c
 #endif
 
-/*
-//	scalehook opcodes
-*/
-#define scalehook_opcode_jmp			0xE8
-#define scalehook_opcode_call 			0xE9
+// --------------------------------------------------
 
+#define scalehook_opcode_jmp 	0xe9 // jmp opcode
+#define scalehook_opcode_call 	0xe8 // call opcode
 /*
-//	scalehook types
+// Also you can use your own opcode.
 */
-#define scalehook_type_method			0
-#define scalehook_type_call				1
 
-/*
-//	other macroses
-*/
-#define scalehook_delete_safe_bytes(n)		if(n) delete[] n
-#define scalehook_delete_safe(n)			if(n) delete n
+// --------------------------------------------------
 
-/*
-//	scalehook structure
-*/
+typedef unsigned char opcode_t;
+typedef unsigned long address_t;
+typedef unsigned char *bytes_t;
+
+// --------------------------------------------------
+
 typedef struct
 {
-	// bytes
-	unsigned char *original_bytes;
-	unsigned char *new_bytes;
-	//
-	void *src;
-	void *dst;
-	int size;
-	//
-	unsigned long original_address;
-	//
-	unsigned char opcode;
-	int type;
-	//
-	bool installed;
-	bool unprotected;
-
-	//
-	unsigned long get_original_address()
-	{
-		return original_address;
-	}
-
-	unsigned char get_opcode()
-	{
-		return opcode;
-	}
-
-	int get_type()
-	{
-		return type;
-	}
-
-	bool is_installed()
-	{
-		return installed;
-	}
-
-	bool is_unprotected()
-	{
-		return unprotected;
-	}
-
-	int get_size()
-	{
-		return size;
-	}
+	bytes_t new_bytes; // new bytes
+	bytes_t original_bytes; // original bytes
+	void *src; // source address
+	void *dst; // dest address
+	size_t size; // size
+	int type; // type
+	opcode_t opcode; // opcode
+	address_t original_address; // original oddress
+	address_t relative_address; // relative oddress
+	int installed;
+	int unprotected;
 } scalehook_t;
 
-// ----------------------------
-// namespace :scalehook
-namespace scalehook
+// --------------------------------------------------
+
+enum scalehook_types
 {
-	/*
-	//	global scalehook functions
-	*/
-	bool unprotect(unsigned long src, int size);
-	bool unprotect(void *src, int size);
-	// cast pvoid to unsigned long
-	unsigned long get_address(void *addr);
-	/*
-	//	cross-platform class for working with addresses too easy
-	//	All samples you can find here:
-	//		https://github.com/RakLabs/scalehook
-	*/
-	class address
-	{
-	private:
-		unsigned long shaddr = 0;
+	scalehook_type_method,
+	scalehook_type_call
+};
 
-	public:
-		address();
-		address(unsigned long addr);
-		address(void *addr);
+// --------------------------------------------------
 
-		/*
-		//	i think it's be easier to use = instead of .set(?)
-		*/
-		int operator=(unsigned long addr);
-		/*
-		//	of course don't forget about pvoid
-		*/
-		int operator=(void *addr);
+scalehook_export int scalehook_call scalehook_unprotect(void *src, size_t size);
 
-		/*
-		//	return address stored in shaddr var
-		*/
-		unsigned long get();
-		/*
-		//	same but in pvoid
-		*/
-		void *get_in_void();
-		
-		/*
-		//
-		*/
-		bool isnull();
-	};
+scalehook_export scalehook_t scalehook_call *scalehook_create(void *src, void *dst, size_t size, opcode_t opcode, int type);
+scalehook_export scalehook_t scalehook_call *scalehook_create_fast(void *src, void *dst);
+scalehook_export void scalehook_call scalehook_destroy(scalehook_t *scalehook);
+scalehook_export int scalehook_call scalehook_fast_hook(void *src, void *dst);
 
-	/*
-	//	cross-platform class for memory scanning
-	//	All samples you can find here:
-	//		https://github.com/RakLabs/scalehook
-	*/
-	class scanner
-	{
-	private:
-		// size of image
-		unsigned long size = 0;
+scalehook_export address_t scalehook_call scalehook_get_original_address(scalehook_t *scalehook);
+scalehook_export address_t scalehook_call scalehook_get_relative_address(scalehook_t *scalehook);
+scalehook_export size_t scalehook_call scalehook_get_size(scalehook_t *scalehook);
+scalehook_export opcode_t scalehook_call scalehook_get_opcode(scalehook_t *scalehook);
+scalehook_export int scalehook_call scalehook_is_installed(scalehook_t *scalehook);
+scalehook_export int scalehook_call scalehook_is_unprotected(scalehook_t *scalehook);
+scalehook_export int scalehook_call scalehook_get_type(scalehook_t *scalehook);
+scalehook_export void scalehook_call *scalehook_get_src(scalehook_t *scalehook);
+scalehook_export void scalehook_call *scalehook_get_dst(scalehook_t *scalehook);
+scalehook_export unsigned char scalehook_call *scalehook_get_original_bytes(scalehook_t *scalehook);
+scalehook_export unsigned char scalehook_call *scalehook_get_new_bytes(scalehook_t *scalehook);
 
-		// image dos base
-		unsigned long base = 0;
-
-		// patern length (getting from mask length, it's so important!)
-		unsigned long patternlength = 0;
-		
-		bool inited = false;
-		void *module_addr = NULL;
-
-	public:
-		scanner(void *module);
-		/*
-		//	get information about image (if we can)
-		*/
-		bool init();
-
-		/*
-		//	find address by pattern
-		*/
-		address find(const char *pattern, const char *mask);
-	};
-
-	/*
-	//	cross-platform class for hooking
-	//	All simples you can find here:
-	//		https://github.com/RakLabs/scalehook
-	*/
-	class hook
-	{
-	public:
-		/*
-		//	create a hook
-		*/
-		static scalehook_t *create(void *src, void *dst, int size = 5, int type = scalehook_type_call, unsigned char opcode = scalehook_opcode_jmp);
-		static bool fast_create(void *src, void *dst);
-		/*
-		//	you should destroy it, after using to avoid memory leak!
-		*/
-		static void destroy(scalehook_t *new_scalehook);
-
-		/*
-		//	installing/uninstalling already created hook
-		*/
-		static bool install(scalehook_t *new_scalehook);
-		static bool uninstall(scalehook_t *new_scalehook);
-
-		/*
-		// 	return stored original address
-		*/
-		static address get_original_address(scalehook_t *new_scalehook);
-	};
-}
-// ----------------------------
+#endif // SCALEHOOK_H_
