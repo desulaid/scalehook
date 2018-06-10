@@ -27,14 +27,11 @@
 #include <iostream>
 #include <string.h>
 #include <vector>
-#ifdef _WIN32
-#include <windows.h>
+
+#if defined __WIN32__ || defined _WIN32 || defined WIN32
+#define scalehook_windows
 #else
-#include <dlfcn.h>
-#include <stddef.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
+#define scalehook_unix
 #endif
 
 /*

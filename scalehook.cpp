@@ -24,6 +24,15 @@
 //		https://github.com/RakLabs/scalehook-cpp
 */
 #include "scalehook.h"
+#ifdef scalehook_windows
+#include <windows.h>
+#else
+#include <dlfcn.h>
+#include <stddef.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
+#endif
 
 // -----------------------------------
 // namespace :scalehook (global functions)
@@ -33,7 +42,7 @@ bool scalehook::unprotect(unsigned long src, int size)
 }
 bool scalehook::unprotect(void *src, int size)
 {
-#ifdef _WIN32
+#ifdef scalehook_windows
 	DWORD oldprotection;
 	if (!VirtualProtect(src, size, PAGE_EXECUTE_READWRITE, &oldprotection))
 	{
@@ -107,7 +116,7 @@ scalehook::scanner::scanner(void *module)
 }
 bool scalehook::scanner::init()
 {
-#ifdef _WIN32
+#ifdef scalehook_windows
 	MEMORY_BASIC_INFORMATION module_info;
 	if (!VirtualQuery(module_addr, &module_info, sizeof(module_info)))
 	{
