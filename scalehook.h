@@ -140,6 +140,9 @@ scalehook_export scalehook_t scalehook_call *scalehook_create_fast(void *src, vo
 scalehook_export void scalehook_call scalehook_destroy(scalehook_t *scalehook);
 scalehook_export int scalehook_call scalehook_fast_hook(void *src, void *dst);
 
+scalehook_export int scalehook_install(scalehook_t *scalehook);
+scalehook_export int scalehook_uninstall(scalehook_t *scalehook);
+
 scalehook_export address_t scalehook_call scalehook_get_original_address(scalehook_t *scalehook);
 scalehook_export address_t scalehook_call scalehook_get_relative_address(scalehook_t *scalehook);
 scalehook_export size_t scalehook_call scalehook_get_size(scalehook_t *scalehook);

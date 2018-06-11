@@ -191,6 +191,44 @@ scalehook_export int scalehook_call scalehook_fast_hook(void *src, void *dst)
 
 // -------------------------------------------------
 
+scalehook_export int scalehook_call scalehook_install(scalehook_t *scalehook)
+{
+	if(!scalehook)
+	{
+		return 0;
+	}
+	
+	if(scalehook->installed)
+	{
+		return 0;
+	}
+	
+	memcpy(scalehook->src, scalehook->new_bytes, scalehook->size);
+	scalehook->installed = 1;
+	return 1;
+}
+
+// -------------------------------------------------
+
+scalehook_export int scalehook_call scalehook_uninstall(scalehook_t *scalehook)
+{
+	if(!scalehook)
+	{
+		return 0;
+	}
+	
+	if(scalehook->installed == 0)
+	{
+		return 0;
+	}
+	
+	memcpy(scalehook->src, scalehook->original_bytes, scalehook->size);
+	scalehook->installed = 0;
+	return 1;
+}
+
+// -------------------------------------------------
+
 scalehook_export address_t scalehook_call scalehook_get_original_address(scalehook_t *scalehook)
 {
 	if(!scalehook)
