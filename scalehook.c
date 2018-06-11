@@ -1,9 +1,11 @@
-/*
-	Copyright 2018 (c) RakLabs
+/*	Copyright 2018 (c) RakLabs
+
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
 	You may obtain a copy of the License at
+
 		http://www.apache.org/licenses/LICENSE-2.0
+
 	Unless required by applicable law or agreed to in writing, software
 	distributed under the License is distributed on an "AS IS" BASIS,
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -83,6 +85,56 @@ scalehook_export int scalehook_call scalehook_unprotect(void *src, size_t size)
 	return 1;
 }
 
+scalehook_export scalehook_jmp_t *scalehook_call scalehook_create_jmp(void *src, void *dst, size_t size, opcode_t opcode)
+{
+	if (!src || !dst || !size || !opcode)
+	{
+		return NULL;
+	}
+
+	scalehook_jmp_t *scalehook_jmp = (scalehook_jmp_t*)malloc(sizeof(scalehook_jmp_t));
+	if (!scalehook_jmp)
+	{
+		return NULL;
+	}
+
+	scalehook_jmp->src = src;
+	scalehook_jmp->dst = dst;
+	scalehook_jmp->size = size;
+	scalehook_jmp->opcode = opcode;
+
+	return scalehook_jmp;
+}
+
+scalehook_export int scalehook_call scalehook_execute_jmp(scalehook_jmp_t *scalehook_jmp)
+{
+	if (!scalehook_jmp)
+	{
+		return 0;
+	}
+
+	scalehook_jmp->original_bytes = malloc(scalehook_jmp->size);
+	if (!scalehook_jmp->original_bytes)
+	{
+		return 0;
+	}
+	memcpy(scalehook_jmp->original_bytes, scalehook_jmp->src, scalehook_jmp->size);
+
+	scalehook_jmp->new_bytes = (bytes_t)malloc(scalehook_jmp->size);
+	if (!scalehook_jmp->new_bytes)
+	{
+		free(scalehook_jmp->original_bytes);
+		return 0;
+	}
+
+	scalehook_jmp->new_bytes[0] = scalehook_jmp->opcode;
+	scalehook_jmp->relative_address = (unsigned long)scalehook_jmp->dst - ((unsigned long)scalehook_jmp->src + scalehook_jmp_size);
+	*(unsigned long*)(scalehook_jmp->new_bytes + 1) = scalehook_jmp->relative_address;
+
+	memcpy(scalehook_jmp->src, (void*)scalehook_jmp->new_bytes, scalehook_jmp->size);
+	return 1;
+}
+
 scalehook_export scalehook_t *scalehook_call scalehook_create(void *src, void *dst, size_t size, opcode_t opcode)
 {
 	if (!src || !dst || !size || !opcode)
@@ -99,11 +151,7 @@ scalehook_export scalehook_t *scalehook_call scalehook_create(void *src, void *d
 	scalehook->installed = 0;
 	scalehook->unprotected = 0;
 
-#ifdef scalehook_x64
-	scalehook->scalehook_jmp = scalehook_create_jmp_x64(src, dst, size, opcode);
-#else
-	scalehook->scalehook_jmp = scalehook_create_jmp_x86(src, dst, size, opcode);
-#endif
+	scalehook->scalehook_jmp = scalehook_create_jmp(src, dst, size, opcode);
 	if (!scalehook->scalehook_jmp)
 	{
 		free(scalehook);
@@ -127,21 +175,12 @@ scalehook_export scalehook_t *scalehook_call scalehook_create(void *src, void *d
 		scalehook->original_address = (unsigned long)src;
 	}
 
-#ifdef scalehook_x64
-	if (!scalehook_execute_jmp_x64(scalehook->scalehook_jmp))
+	if (!scalehook_execute_jmp(scalehook->scalehook_jmp))
 	{
 		free(scalehook->scalehook_jmp);
 		free(scalehook);
 		return NULL;
 	}
-#else
-	if (!scalehook_execute_jmp_x86(scalehook->scalehook_jmp))
-	{
-		free(scalehook->scalehook_jmp);
-		free(scalehook);
-		return NULL;
-	}
-#endif
 
 	scalehook->installed = 1;
 	return scalehook;

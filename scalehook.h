@@ -1,9 +1,11 @@
-/*
-	Copyright 2018 (c) RakLabs
+/*	Copyright 2018 (c) RakLabs
+
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
 	You may obtain a copy of the License at
+
 		http://www.apache.org/licenses/LICENSE-2.0
+
 	Unless required by applicable law or agreed to in writing, software
 	distributed under the License is distributed on an "AS IS" BASIS,
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -126,26 +128,12 @@ typedef struct
 	int unprotected;
 } scalehook_t;
 
-/*
-//	include needed header file for current bits.
-*/
-#if defined scalehook_x64
-#include "scalehook_x64.h"
-#ifndef scalehook_x64_h_
-#error "Cannot include x64 header file"
-#endif
-#elif defined scalehook_x86
-#include "scalehook_x86.h"
-#ifndef scalehook_x86_h_
-#error "Cannot include x86 header file"
-#endif
-#else
-#error "Unsupported archichecture."
-#endif
-
 // -------------------------------------------------
 
 scalehook_export int scalehook_call scalehook_unprotect(void *src, size_t size);
+
+scalehook_export scalehook_jmp_t *scalehook_call scalehook_create_jmp(void *src, void *dst, size_t size, opcode_t opcode);
+scalehook_export int scalehook_call scalehook_execute_jmp(scalehook_jmp_t *scalehook_jmp);
 
 scalehook_export scalehook_t *scalehook_call scalehook_create(void *src, void *dst, size_t size, opcode_t opcode);
 scalehook_export scalehook_t *scalehook_call scalehook_create_fast(void *src, void *dst);
