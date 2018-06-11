@@ -15,7 +15,7 @@ void kek()
 	}
 	printf("[uninstalling] success.\n");
 	printf("Call the original function...\n");
-	((original)new_hook->original_address);
+	((original)new_hook->original_address)();
 	printf("Destroying hook...\n");
 	scalehook_destroy(new_hook);
 	printf("[destroying] success.\n");
