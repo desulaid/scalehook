@@ -1,6 +1,9 @@
 # scalehook
 cross-platform C/C++ hooking library. I hope this library will be very useful for your project.
 
+## Important
+If you have errors with compilation on C++, just change file extension on .cpp. Example: `scalehook.c => scalehook.cpp`
+
 ## Functions
 Here are all scalehook's functions.<br></br>
 ```scalehook_export scalehook_t scalehook_call *scalehook_create(void *src, void *dst, size_t size, opcode_t opcode, int type);``` - create a new hook<br>
