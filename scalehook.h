@@ -1,12 +1,9 @@
 /*
 	Copyright 2018 (c) RakLabs
-
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
 	You may obtain a copy of the License at
-
 		http://www.apache.org/licenses/LICENSE-2.0
-
 	Unless required by applicable law or agreed to in writing, software
 	distributed under the License is distributed on an "AS IS" BASIS,
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,11 +20,6 @@
 //		* hook any function c:
 //		* something else?
 //
-//	Some features:
-//		1.) Support two types.
-//		2.) You can use your own opcodes (not only jmp or call).
-//		3.) All! I think that's enough, ha-ha!
-//
 //	Functions:
 //		scalehook_unprotect(void *src, size_t size) - Getting access.
 //
@@ -37,12 +29,12 @@
 //		scalehook_fast_hook() - Fast hook (returns true/false).
 //
 //		scalehook_get_original_address() - Get hook original address
-//		scalehook_get_opcode() - Get hook opcodes
-//		scalehook_get_src() - Get source.
-//		scalehook_get_dst() - Get dest.
+//		scalehook_jmp_get_opcode() - Get hook opcodes
+//		scalehook_jmp_get_src() - Get source.
+//		scalehook_jmp_get_dst() - Get dest.
 //		scalehook_is_installed() - Get installing state
 //		scalehook_is_unprotected() - Get unprotecting state
-//		scalehook_get_size() - Get size
+//		scalehook_jmp_get_size() - Get size
 //
 //	Structures:
 //		scalehook_t - scalehook structure
@@ -54,25 +46,33 @@
 //	Definited types:
 //		opcode_t (unsigned char).
 //		bytes_t (unsigned char *).
-//		address_t (unsigned long).
 //
 //	Opcodes:
 //		Definited opcodes: jmp & call
 //		Any opcodes
 //
 //	Supports:
-//		Windows/Linux (x32) (other OS didn't tested).
+//		Windows/Linux (x32/x64) (other OS didn't tested).
 */
 #ifndef SCALEHOOK_H_
 #define SCLAEHOOK_H_
-#if defined __WIN32__ || defined _WIN32 || defined WIN32
+#include <stdlib.h>
+#include <string.h>
+#if defined __i386__ || defined _X86_ || defined _M_IX86
+#define scalehook_x86
+#define scalehook_jmp_size 5
+#elif defined __AMD64__ || defined __x86_64__ || defined _M_AMD64
+#define scalehook_x64
+#define scalehook_jmp_size 5
+#endif
+#if defined __WIN32__ || defined _WIN32 || defined WIN32 || defined __WIN64__ || defined _WIN64 || defined WIN64
 #define scalehook_windows
 #elif defined __LINUX__ || defined __linux__ || defined __linux || defined __FreeBSD__ || defined __OpenBSD__
 #define scalehook_unix
 #include <stddef.h>
 #endif
 #if !defined scalehook_windows && !defined scalehook_unix
-#error "Damn it! I don't know your OS ):"
+#error "Unknown OS."
 #endif
 #if defined __cplusplus
 #define scalehook_cpp
@@ -91,68 +91,78 @@
 #define scalehook_call
 #define scalehook_export scalehook_extern_c
 #endif
+#endif // SCALEHOOK_H_
 
-// --------------------------------------------------
+// -------------------------------------------------
 
-#define scalehook_opcode_jmp 	0xe9 // jmp opcode
-#define scalehook_opcode_call 	0xe8 // call opcode
-/*
-// Also you can use your own opcode.
-*/
+#define scalehook_opcode_jmp	0xE9
+#define scalehook_opcode_call	0xE8
 
-// --------------------------------------------------
+// -------------------------------------------------
 
-typedef unsigned char opcode_t;
-typedef unsigned long address_t;
 typedef unsigned char *bytes_t;
+typedef unsigned char opcode_t;
 
-// --------------------------------------------------
+// -------------------------------------------------
 
 typedef struct
 {
-	bytes_t new_bytes; // new bytes
-	bytes_t original_bytes; // original bytes
-	void *src; // source address
-	void *dst; // dest address
-	size_t size; // size
-	int type; // type
-	opcode_t opcode; // opcode
-	address_t original_address; // original oddress
-	address_t relative_address; // relative oddress
+	void *src;
+	void *dst;
+	opcode_t opcode;
+	size_t size;
+	void *original_bytes;
+    bytes_t new_bytes;
+	unsigned long relative_address;
+} scalehook_jmp_t;
+
+// -------------------------------------------------
+
+typedef struct
+{
+	scalehook_jmp_t *scalehook_jmp;
+	unsigned long original_address;
 	int installed;
 	int unprotected;
 } scalehook_t;
 
-// --------------------------------------------------
+/*
+//	include needed header file for current bits.
+*/
+#if defined scalehook_x64
+#include "scalehook_x64.h"
+#ifndef scalehook_x64_h_
+#error "Cannot include x64 header file"
+#endif
+#elif defined scalehook_x86
+#include "scalehook_x86.h"
+#ifndef scalehook_x86_h_
+#error "Cannot include x86 header file"
+#endif
+#else
+#error "Unsupported archichecture."
+#endif
 
-enum scalehook_types
-{
-	scalehook_type_method,
-	scalehook_type_call
-};
-
-// --------------------------------------------------
+// -------------------------------------------------
 
 scalehook_export int scalehook_call scalehook_unprotect(void *src, size_t size);
 
-scalehook_export scalehook_t scalehook_call *scalehook_create(void *src, void *dst, size_t size, opcode_t opcode, int type);
-scalehook_export scalehook_t scalehook_call *scalehook_create_fast(void *src, void *dst);
-scalehook_export void scalehook_call scalehook_destroy(scalehook_t *scalehook);
+scalehook_export scalehook_t *scalehook_call scalehook_create(void *src, void *dst, size_t size, opcode_t opcode);
+scalehook_export scalehook_t *scalehook_call scalehook_create_fast(void *src, void *dst);
 scalehook_export int scalehook_call scalehook_fast_hook(void *src, void *dst);
+scalehook_export int scalehook_call scalehook_destroy(scalehook_t *scalehook);
 
 scalehook_export int scalehook_call scalehook_install(scalehook_t *scalehook);
 scalehook_export int scalehook_call scalehook_uninstall(scalehook_t *scalehook);
 
-scalehook_export address_t scalehook_call scalehook_get_original_address(scalehook_t *scalehook);
-scalehook_export address_t scalehook_call scalehook_get_relative_address(scalehook_t *scalehook);
-scalehook_export size_t scalehook_call scalehook_get_size(scalehook_t *scalehook);
-scalehook_export opcode_t scalehook_call scalehook_get_opcode(scalehook_t *scalehook);
+scalehook_export unsigned long scalehook_call scalehook_get_original_address(scalehook_t *scalehook);
 scalehook_export int scalehook_call scalehook_is_installed(scalehook_t *scalehook);
 scalehook_export int scalehook_call scalehook_is_unprotected(scalehook_t *scalehook);
-scalehook_export int scalehook_call scalehook_get_type(scalehook_t *scalehook);
-scalehook_export void scalehook_call *scalehook_get_src(scalehook_t *scalehook);
-scalehook_export void scalehook_call *scalehook_get_dst(scalehook_t *scalehook);
-scalehook_export unsigned char scalehook_call *scalehook_get_original_bytes(scalehook_t *scalehook);
-scalehook_export unsigned char scalehook_call *scalehook_get_new_bytes(scalehook_t *scalehook);
 
-#endif // SCALEHOOK_H_
+scalehook_export void *scalehook_call scalehook_jmp_get_src(scalehook_jmp_t *scalehook_jmp);
+scalehook_export void *scalehook_call scalehook_jmp_get_dst(scalehook_jmp_t *scalehook_jmp);
+scalehook_export opcode_t scalehook_call scalehook_jmp_get_opcode(scalehook_jmp_t *scalehook_jmp);
+scalehook_export size_t scalehook_call scalehook_jmp_get_size(scalehook_jmp_t *scalehook_jmp);
+scalehook_export void *scalehook_call scalehook_jmp_get_original_bytes(scalehook_jmp_t *scalehook_jmp);
+scalehook_export bytes_t scalehook_call scalehook_jmp_get_new_bytes(scalehook_jmp_t *scalehook_jmp);
+scalehook_export unsigned long scalehook_call scalehook_jmp_get_relative_address(scalehook_jmp_t *scalehook_jmp);
