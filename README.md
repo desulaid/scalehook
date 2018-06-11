@@ -24,7 +24,8 @@ Functions for getting information about hook:<br>
 ```scalehook_export unsigned char scalehook_call *scalehook_get_new_bytes(scalehook_t *scalehook);```
 
 ## Example
-```#include <stdio.h>
+```c
+#include <stdio.h>
 #include "scalehook.h"
 
 scalehook_t *new_hook;
@@ -48,4 +49,5 @@ int main(void)
     printf("1: Hook failed.\n");
   }
   return 0;
-}```
+}
+```
