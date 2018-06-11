@@ -93,7 +93,6 @@
 #define scalehook_call
 #define scalehook_export scalehook_extern_c
 #endif
-#endif // SCALEHOOK_H_
 
 // -------------------------------------------------
 
@@ -154,3 +153,5 @@ scalehook_export size_t scalehook_call scalehook_jmp_get_size(scalehook_jmp_t *s
 scalehook_export void *scalehook_call scalehook_jmp_get_original_bytes(scalehook_jmp_t *scalehook_jmp);
 scalehook_export bytes_t scalehook_call scalehook_jmp_get_new_bytes(scalehook_jmp_t *scalehook_jmp);
 scalehook_export unsigned long scalehook_call scalehook_jmp_get_relative_address(scalehook_jmp_t *scalehook_jmp);
+
+#endif // SCALEHOOK_H_
