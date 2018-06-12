@@ -41,10 +41,6 @@
 //	Structures:
 //		scalehook_t - scalehook structure
 //
-//	Types:
-//		Method type. (no opcodes)
-//		Call type. (opcodes)
-//
 //	Definited types:
 //		opcode_t (unsigned char).
 //		bytes_t (unsigned char *).
