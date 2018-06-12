@@ -29,8 +29,8 @@ void lol()
 int main(void)
 {
 	printf("============ scalehook test =============\n");
-	printf("Installing hook.... (type call, opcode jmp)\n");
-	new_hook = scalehook_create(lol, kek, 5, scalehook_opcode_jmp, scalehook_type_call);
+	printf("Installing hook....\n");
+	new_hook = scalehook_create(lol, kek, 5, scalehook_opcode_jmp);
 	// new_hook = scalehook_create_fast(lol, kek);
 	if(!new_hook)
 	{
