@@ -131,6 +131,7 @@ typedef struct
 
 scalehook_export int scalehook_call scalehook_unprotect(void *src, size_t size);
 
+scalehook_export int scalehook_call scalehook_execute_bytes(bytes_t bytes, void *src, size_t size);
 scalehook_export scalehook_jmp_t *scalehook_call scalehook_create_jmp(void *src, void *dst, size_t size, opcode_t opcode);
 scalehook_export int scalehook_call scalehook_execute_jmp(scalehook_jmp_t *scalehook_jmp);
 

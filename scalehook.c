@@ -85,6 +85,17 @@ scalehook_export int scalehook_call scalehook_unprotect(void *src, size_t size)
 	return 1;
 }
 
+scalehook_export int scalehook_call scalehook_execute_bytes(bytes_t bytes, void *src, size_t size)
+{
+	if(!src || !bytes || !size)
+	{
+		return 0;
+	}
+	
+	memcpy(src, (void*)bytes, size);
+	return 1;
+}
+
 scalehook_export scalehook_jmp_t *scalehook_call scalehook_create_jmp(void *src, void *dst, size_t size, opcode_t opcode)
 {
 	if (!src || !dst || !size || !opcode)
@@ -131,8 +142,7 @@ scalehook_export int scalehook_call scalehook_execute_jmp(scalehook_jmp_t *scale
 	scalehook_jmp->relative_address = (unsigned long)scalehook_jmp->dst - ((unsigned long)scalehook_jmp->src + scalehook_jmp_size);
 	*(unsigned long*)(scalehook_jmp->new_bytes + 1) = scalehook_jmp->relative_address;
 
-	memcpy(scalehook_jmp->src, (void*)scalehook_jmp->new_bytes, scalehook_jmp->size);
-	return 1;
+	return scalehook_execute_bytes(scalehook_jmp->new_bytes, scalehook_jmp->src, scalehook_jmp->size);
 }
 
 scalehook_export scalehook_t *scalehook_call scalehook_create(void *src, void *dst, size_t size, opcode_t opcode)
@@ -229,7 +239,7 @@ scalehook_export int scalehook_call scalehook_install(scalehook_t *scalehook)
 		return 0;
 	}
 
-	memcpy(scalehook->scalehook_jmp->src, (void*)scalehook->scalehook_jmp->new_bytes, scalehook->scalehook_jmp->size);
+	scalehook_execute_bytes(scalehook->scalehook_jmp->new_bytes, scalehook->scalehook_jmp->src, scalehook->scalehook_jmp->size);
 	scalehook->installed = 1;
 	return 1;
 }
@@ -246,7 +256,7 @@ scalehook_export int scalehook_call scalehook_uninstall(scalehook_t *scalehook)
 		return 0;
 	}
 
-	memcpy(scalehook->scalehook_jmp->src, scalehook->scalehook_jmp->original_bytes, scalehook->scalehook_jmp->size);
+	scalehook_execute_bytes((bytes_t)scalehook->scalehook_jmp->original_bytes, scalehook->scalehook_jmp->src, scalehook->scalehook_jmp->size);
 	scalehook->installed = 0;
 	return 1;
 }
