@@ -42,7 +42,7 @@ typedef void(*original)();
 
 void kek()
 {
-  printf("2: Hook successfull.\n");
+  printf("2: Success hooked.\n");
   printf("3: Calling original function..\n");
   scalehook_uninstall(new_hook);
   ((original)new_hook->original_address)();
@@ -72,7 +72,7 @@ Now let's get information about hook.
 
 void kek()
 {
-  printf("2: Hook successfull.\n");
+  printf("2: Success hooked.\n");
   printf("Hook size: %d\n", scalehook_jmp_get_size(scalehook->scalehook_jmp));
 }
 ```
