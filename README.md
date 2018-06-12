@@ -29,6 +29,7 @@ scalehook_export unsigned long scalehook_call scalehook_jmp_get_relative_address
 ```
 
 ## Example
+Simple hook.
 ```c
 #include <stdio.h>
 #include "scalehook.h"
@@ -62,6 +63,17 @@ int main(void)
   return 0;
 }
 ```
+Now let's get information about hook.
+```c
+// Take code from the previous example
+
+void kek()
+{
+  printf("2: Hook successfull.\n");
+  printf("Hook size: %d\n", scalehook_jmp_get_size(scalehook->scalehook_jmp));
+}
+```
+Very easy, is not it?
 
 ## Test
 If you want to test scalehook, then:
