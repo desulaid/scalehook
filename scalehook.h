@@ -65,7 +65,7 @@
 #endif
 #if defined __WIN32__ || defined _WIN32 || defined WIN32 || defined __WIN64__ || defined _WIN64 || defined WIN64
 #define scalehook_windows
-#elif defined __LINUX__ || defined __linux__ || defined __linux || defined __FreeBSD__ || defined __OpenBSD__
+#elif defined __LINUX__ || defined __linux__ || defined __linux || defined FREEBSD || defined __FreeBSD__ || defined __OpenBSD__
 #define scalehook_unix
 #include <stddef.h>
 #endif
