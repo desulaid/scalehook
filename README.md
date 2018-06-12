@@ -76,7 +76,7 @@ void kek()
   printf("Hook size: %d\n", scalehook_jmp_get_size(scalehook->scalehook_jmp));
 }
 ```
-Very easy, is not it?
+So easy, isn't it?
 
 ## Test
 If you want to test scalehook, then:
