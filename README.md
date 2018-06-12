@@ -5,13 +5,16 @@ cross-platform C/C++ hooking library. I hope this library will be very useful fo
 If you have errors with C++ compilation, just change file extension on .cpp. Example: `scalehook.c => scalehook.cpp`
 
 ## Functions
-Here are all scalehook's functions.<br></br>
-```scalehook_export scalehook_t scalehook_call *scalehook_create(void *src, void *dst, size_t size, opcode_t opcode, int type);``` - create a new hook<br>
-```scalehook_export scalehook_t scalehook_call *scalehook_create_fast(void *src, void *dst);``` - create a new hook (but with arguments by default).<br>
-```scalehook_export void scalehook_call scalehook_destroy(scalehook_t *scalehook);``` - destroy a hook. (It's very improtant, if you don't want memory leak).<br>
-```scalehook_export int scalehook_call scalehook_fast_hook(void *src, void *dst);``` - just hook without returning scalehook structure.<br>
-```scalehook_export int scalehook_call scalehook_install(scalehook_t *scalehook);``` - install already created hook.<br>
-```scalehook_export int scalehook_call scalehook_uninstall(scalehook_t *scalehook);``` - uninstall already created hook.<br></br>
+Here are all scalehook's functions.
+```c
+scalehook_export scalehook_t *scalehook_call scalehook_create(void *src, void *dst, size_t size, opcode_t opcode); // create a hook
+scalehook_export scalehook_t *scalehook_call scalehook_create_fast(void *src, void *dst); // scalehook_create with arguments by default
+scalehook_export int scalehook_call scalehook_fast_hook(void *src, void *dst); // create hook fast (not return hook handle)
+scalehook_export int scalehook_call scalehook_destroy(scalehook_t *scalehook); // destroy hook (this is to avoid a memory leak)
+
+scalehook_export int scalehook_call scalehook_install(scalehook_t *scalehook); // install already created hook
+scalehook_export int scalehook_call scalehook_uninstall(scalehook_t *scalehook); // uninstall already created hook
+```
 
 Functions for getting information about hook:<br>
 ```c
