@@ -61,7 +61,7 @@
 #define scalehook_x86
 #define scalehook_jmp_size 5
 #elif defined(__AMD64__) || defined(__x86_64__) || defined(_M_AMD64)
-#define scalehook_x64
+#define scalehook_x86_x64
 #define scalehook_jmp_size 5
 #endif
 
