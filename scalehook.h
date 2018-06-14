@@ -65,7 +65,7 @@
 #define scalehook_jmp_size 5
 #endif
 
-#if !defined(scalehook_x86) || !defined(scalehook_x86_x64)
+#if !defined(scalehook_x86) && !defined(scalehook_x86_x64)
 #error "Unsupported architecture."
 #endif
 
