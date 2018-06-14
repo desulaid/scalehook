@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "scalehook.h"
+#include "../scalehook.h"
 
 scalehook_t *new_hook;
 typedef void(*original)();
