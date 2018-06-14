@@ -91,4 +91,4 @@ int main()
 }
 ```
 
-More examples you can see here. Well, on this, have a nice day!!!
+More examples you can see here (Also there you can see more simple ways of hooking). Well, on this, have a nice day!!!
