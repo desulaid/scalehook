@@ -91,4 +91,4 @@ int main()
 }
 ```
 
-More examples you can see here (Also there you can see more simple ways of hooking). Well, on this, have a nice day!!!
+More examples you can see [here](https://github.com/RakLabs/scalehook/tree/master/examples) (Also there you can see more simple ways of hooking). Well, on this, have a nice day!!!
