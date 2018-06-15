@@ -17,77 +17,21 @@ If you want to help me in the develop, then write me a mail! I will write to you
 ## Issue
 If you find a problem when using scalehook, please describe it [here](https://github.com/RakLabs/scalehook/issues). I will try to solve it as soon as possible!
 
-## Examples
-Of course, I'll give you examples of using this library, where without them! Now, I show you, how you can hook function, using this library.
-```c
-#include <stdio.h>
-#include "scalehook.h"
+## Getting started
+### First prject
+Let's take one of the examples from here and try to build it, imagine that this is your project (Or you can write yourself using the example). First of all, we will put the library files in the same folder together with the project. Please note that in the file of your project you must include the library header file. If you are sure that everything is in order, let's build it. First, we compile the scalehook source file. <br>
+`gcc -c scalehook.c` <br>
+If compiled successfully, then we compile our file. <br>
+`gcc -c main.c` <br>
+And then build project completely. <br>
+`gcc ./*.o -o main.out` <br>
+Let's run the program. <br>
+`./main.out` <br>
+I hope everything turned out of you. If you have any compiling problems, please describe it here.
 
-scalehook_t scalehook;
-
-void main_print(int a)
-{
-  printf("main_print(%i)\n", a);
-}
-
-void hook_print(int a)
-{
-  printf("hook_print(%i)\n", a);
-}
-
-int main()
-{
-  scalehook = scalehook_create((void*)main_print, (void*)hook_print, 5, scalehook_opcode_jmp);
-  main_print(5);
-  /*
-    want know result?
-    Then try it yourself)!
-  */
-  
-  /*
-    but don't forget about destroy!
-    I think better just destroy hook, instead of get memory leak)
-  */
-  scalehook_destroy(scalehook);
-  return 0;
-}
-```
-It's very easy, isn't it? But i think you have a question "How can i call the original function?". But believe me, it's just as easy!
-```c
-#include <stdio.h>
-#include "scalehook.h"
-
-scalehook_t scalehook;
-typedef void(*original)(int);
-
-void main_print(int a)
-{
-  printf("main_print(%i)\n", a);
-}
-
-void hook_print(int a)
-{
-  printf("hook_print(%i)\n", a);
-  scalehook_uninstall(scalehook);
-  ((original)scalehook->original_address)(a);
-  scalehook_install(scalehook);
-}
-
-int main()
-{
-  scalehook = scalehook_create((void*)main_print, (void*)hook_print, 5, scalehook_opcode_jmp);
-  main_print(5);
-  /*
-    want know result?
-    Then try it yourself)!
-  */
-  
-  /*
-    but don't forget about destroy!
-    I think better just destroy hook, instead of get memory leak)
-  */
-  scalehook_destroy(scalehook);
-  return 0;
-}
-```
-More examples you can see [here](https://github.com/RakLabs/scalehook/tree/master/examples) (Also there you can see more simple ways of hooking). Well, on this, have a nice day!!!
+### Test
+To build and run test, follow the steps:
+1. Clone this repository (`git clone https://github.com/RakLabs/scalehook`)
+2. Build and run (`make`)
+3. Done
+Report any problems here.
