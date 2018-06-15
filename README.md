@@ -24,6 +24,40 @@ Of course, I'll give you examples of using this library, where without them! Now
 #include "scalehook.h"
 
 scalehook_t scalehook;
+
+void main_print(int a)
+{
+  printf("main_print(%i)\n", a);
+}
+
+void hook_print(int a)
+{
+  printf("hook_print(%i)\n", a);
+}
+
+int main()
+{
+  scalehook = scalehook_create((void*)main_print, (void*)hook_print, 5, scalehook_opcode_jmp);
+  main_print(5);
+  /*
+    want know result?
+    Then try it yourself)!
+  */
+  
+  /*
+    but don't forget about destroy!
+    I think better just destroy hook, instead of get memory leak)
+  */
+  scalehook_destroy(scalehook);
+  return 0;
+}
+```
+It's very easy, isn't it? But i think you have a question "How can i call the original function?". But believe me, it's just as easy!
+```c
+#include <stdio.h>
+#include "scalehook.h"
+
+scalehook_t scalehook;
 typedef void(*original)(int);
 
 void main_print(int a)
@@ -56,39 +90,4 @@ int main()
   return 0;
 }
 ```
-It's very easy, isn't it? But i think you have a question "How can i call the original function?". But believe me, it's just as easy!
-```c
-#include <stdio.h>
-#include "scalehook.h"
-
-scalehook_t scalehook;
-
-void main_print(int a)
-{
-  printf("main_print(%i)\n", a);
-}
-
-void hook_print(int a)
-{
-  printf("hook_print(%i)\n", a);
-}
-
-int main()
-{
-  scalehook = scalehook_create((void*)main_print, (void*)hook_print, 5, scalehook_opcode_jmp);
-  main_print(5);
-  /*
-    want know result?
-    Then try it yourself)!
-  */
-  
-  /*
-    but don't forget about destroy!
-    I think better just destroy hook, instead of get memory leak)
-  */
-  scalehook_destroy(scalehook);
-  return 0;
-}
-```
-
 More examples you can see [here](https://github.com/RakLabs/scalehook/tree/master/examples) (Also there you can see more simple ways of hooking). Well, on this, have a nice day!!!
