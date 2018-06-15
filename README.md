@@ -33,7 +33,7 @@ I hope everything turned out of you. If you have any compiling problems, please 
 To build and run test, follow the steps:
 1. Clone this repository (`git clone https://github.com/RakLabs/scalehook`)
 2. Build and run (`make`)
-3. Done
+3. Done <br>
 Report any problems [here](https://github.com/RakLabs/scalehook/issues).
 
 ## Examples
