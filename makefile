@@ -14,7 +14,5 @@ clean:
 	-rm $(clean_flags) ./*.o
 
 scalehook: clean
-	gcc $(scalehook_flags) ./scalehook.c
-	gcc $(scalehook_flags) ./tests/test.c
-	gcc ./*.o -o $(scalehook_out)
+	gcc $(scalehook_flags) ./test/test.c -o $(scalehook_out)
 	$(scalehook_run)
