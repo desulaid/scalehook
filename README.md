@@ -9,7 +9,7 @@ The main advantages of this library:
 Also you can use my library not only for C, but for C++ too! You will not find it difficult to use it in any of these languages!
 
 ## Note
-If you want use it for C++, you should change scalehook source file extension to .cpp! Example: scalehook.`c`=>`cpp`. I hope for you it will not be difficult!
+If you want to use it for C++, you should change scalehook source file extension to .cpp! Example: scalehook.`c`=>`cpp`. I hope for you it will not be difficult!
 
 ## Contributing
 If you want to help me in the develop, then write me a mail! I will write to you about what you can help me, I will be very grateful for your help!
