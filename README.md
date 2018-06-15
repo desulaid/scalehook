@@ -56,7 +56,7 @@ int main()
   return 0;
 }
 ```
-I think, it's very easy, isn't it? But i think you have a question "How can i call the original function?". But believe me, it's just as easy!
+It's very easy, isn't it? But i think you have a question "How can i call the original function?". But believe me, it's just as easy!
 ```c
 #include <stdio.h>
 #include "scalehook.h"
