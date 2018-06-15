@@ -36,5 +36,4 @@ To build and run test, follow the steps:
 3. Done <br>
 Report any problems [here](https://github.com/RakLabs/scalehook/issues).
 
-## Examples
-All examples you can find [here](https://github.com/RakLabs/scalehook/tree/master/examples).
+## [Examples](https://github.com/RakLabs/scalehook/tree/master/examples)
