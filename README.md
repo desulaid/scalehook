@@ -27,11 +27,14 @@ And then build project completely. <br>
 `gcc ./*.o -o main.out` <br>
 Let's run the program. <br>
 `./main.out` <br>
-I hope everything turned out of you. If you have any compiling problems, please describe it here.
+I hope everything turned out of you. If you have any compiling problems, please describe it [here](https://github.com/RakLabs/scalehook/issues).
 
 ### Test
 To build and run test, follow the steps:
 1. Clone this repository (`git clone https://github.com/RakLabs/scalehook`)
 2. Build and run (`make`)
 3. Done
-Report any problems here.
+Report any problems [here](https://github.com/RakLabs/scalehook/issues).
+
+## Examples
+All examples you can find [here](https://github.com/RakLabs/scalehook/tree/master/examples).
