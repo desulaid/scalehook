@@ -114,7 +114,11 @@
 #endif
 
 #if !defined(scalehook_export)
-	#define scalehook_export scalehook_extern_c
+	#if defined(scalehook_unix)
+		#define scalehook_export scalehook_extern_c __attribute__((visibility("default")))
+	#else
+		#define scalehook_export scalehook_extern_c
+	#endif
 #endif
 
 #if !defined(_INC_STDLIB)
