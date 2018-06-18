@@ -41,7 +41,7 @@ Report any problems [here](https://github.com/RakLabs/scalehook/issues).
 #include <stdio.h>
 #include "scalehook.h"
 
-scalehook_t scalehook;
+scalehook_t *scalehook;
 typedef void(*original)(int);
 
 void main_print(int a)
