@@ -40,6 +40,7 @@
 //
 //	Structures:
 //		scalehook_t - scalehook structure
+//		scalehook_jmp_t - jmp structure
 //
 //	Types:
 //		Method type. (no opcodes)
@@ -139,9 +140,9 @@
 typedef unsigned char *bytes_t;
 typedef unsigned char opcode_t;
 #if defined(scalehook_x86_x64)
-typedef unsigned long long address_t
+typedef unsigned long long address_t;
 #else
-typedef unsigned long address_t
+typedef unsigned long address_t;
 #endif
 
 // -------------------------------------------------

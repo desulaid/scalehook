@@ -40,6 +40,7 @@
 //
 //	Structures:
 //		scalehook_t - scalehook structure
+//		scalehook_jmp_t - jmp structure
 //
 //	Types:
 //		Method type. (no opcodes)
