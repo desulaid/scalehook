@@ -1,5 +1,5 @@
 # scalehook
-Welcome! I'm glad you came here. I hope that my new library will be very useful for your project. So, this is an hooking library that works on any platform. If you are really interested in this, then we can continue. <br></br>
+Welcome! I'm glad you came here. I hope that my new library will be very useful for your project. This is a hooking library that works on any platform. If you are really interested in this, then we can continue. <br></br>
 
 The main advantages of this library:
 1. Works on any platform
