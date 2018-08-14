@@ -215,6 +215,9 @@ scalehook_export int scalehook_call scalehook_fast_hook(void *src, void *dst)
 	return 1;
 }
 
+/*
+ * A function that will free up memory.
+ */
 scalehook_export int scalehook_call scalehook_destroy(scalehook_t *scalehook)
 {
 	if (!scalehook)
