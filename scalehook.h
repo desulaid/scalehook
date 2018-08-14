@@ -160,6 +160,10 @@ typedef struct
 
 // -------------------------------------------------
 
+/*
+ * The structure of library that will be returned to the programmer.
+ * Also with it, programmer can perform some manipulations.
+ */
 typedef struct
 {
 	scalehook_jmp_t *scalehook_jmp;
