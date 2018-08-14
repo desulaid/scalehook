@@ -162,7 +162,7 @@ typedef struct
 
 /*
  * The structure of library that will be returned to the programmer.
- * Also with it, programmer can perform some manipulations.
+ * Also with it programmer can perform some manipulations.
  */
 typedef struct
 {
