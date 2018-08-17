@@ -58,7 +58,7 @@
 //		Windows/Linux (x32/x64) (other OS didn't tested).
 */
 #ifndef SCALEHOOK_H_
-#define SCLAEHOOK_H_
+#define SCALEHOOK_H_
 
 #if !defined(scalehook_windows) && !defined(scalehook_unix)
 	#if defined(__WIN32__) || defined(__WIN32) || defined(WIN32) || defined(__WIN64__) || defined(__WIN64) || defined(WIN64)
